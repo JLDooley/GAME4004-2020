@@ -6,6 +6,8 @@ namespace GRIDCITY
 {
     public enum blockType { Block, Arches, Columns, Dishpivot, DomeWithBase, HalfDome, SlitDome, Slope, Tile};
 
+    
+
 	public class CityManager : MonoBehaviour
     {
 
@@ -15,7 +17,9 @@ namespace GRIDCITY
         public Material[] materialArray;
         public GameObject buildingPrefab;
         public GameObject treePrefab;
+        public GameObject wallPrefab;
         public BuildingProfile[] profileArray;
+        public BuildingProfile wallProfile;
 
         private bool[,,] cityArray = new bool [15,15,15];   //increased array size to allow for larger city volume
 
@@ -63,7 +67,18 @@ namespace GRIDCITY
 
             //BUILD CITY WALLS - add your code below
 
-
+            for (int ix = -7; ix < 8; ix++)
+            {
+                for (int iz = -7; iz < 8; iz++)
+                {
+                    if (ix == -7 || ix == 7 || iz == -7 || iz == 7)
+                    {
+                        Instantiate(wallPrefab, new Vector3(ix, 0f, iz), Quaternion.identity);
+                    }
+                    
+                }
+                
+            }
 
 
 
@@ -74,7 +89,7 @@ namespace GRIDCITY
 
 
             //CITY BUILDINGS:
-			for (int i=-4;i<5;i+=2)
+            for (int i=-4;i<5;i+=2)
             {
                 for (int j=-4;j<5;j+=2)
                 {

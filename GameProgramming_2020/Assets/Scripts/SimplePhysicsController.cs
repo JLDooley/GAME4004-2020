@@ -11,6 +11,10 @@ public class SimplePhysicsController : MonoBehaviour
 
     private Rigidbody rb;
 
+    private float spinnerDistance;
+    public bool cityNuked = false;
+    public GameObject cityNuke;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,8 +35,13 @@ public class SimplePhysicsController : MonoBehaviour
 
         //ADD CHECK FOR DISTANCE AND TRIGGER THE EXPLOSION HERE:
 
+        spinnerDistance = Vector3.Magnitude(transform.position);
 
-
+        if (spinnerDistance > 30.0f && !(cityNuked))
+        {
+            Instantiate(cityNuke, new Vector3(0, 0, 0), Quaternion.identity);
+            cityNuked = true;
+        }
 
     }
 

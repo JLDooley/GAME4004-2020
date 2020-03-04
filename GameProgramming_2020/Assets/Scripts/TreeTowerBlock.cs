@@ -17,6 +17,11 @@ namespace GRIDCITY
         private MeshFilter myMeshFilter;
         private Mesh myMesh;
         private Material myMaterial;
+
+        public GameObject nukeCheck;
+
+        public int branchProb = 5;
+
         #endregion
 
         #region Properties	
@@ -51,7 +56,6 @@ namespace GRIDCITY
         // Use this for external initialization
         void Start()
         {
-
             int x = Mathf.RoundToInt(transform.position.x + 7.0f);
             int y = Mathf.RoundToInt(transform.position.y);
             int z = Mathf.RoundToInt(transform.position.z + 7.0f);
@@ -116,43 +120,43 @@ namespace GRIDCITY
 
 
                         random = Random.Range(0, 10);
-                        if ((random<5)&&(!cityManager.CheckSlot(x, y+1, z))) //building east (+x direction)
+                        if ((random<branchProb)&&(!cityManager.CheckSlot(x+1, y, z))) //building east (+x direction)
                         {
-                            cityManager.SetSlot(x, y+1, z, true);
-                            child = Instantiate(treePrefab, transform.position + Vector3.up * 1.01f, Quaternion.identity, this.transform);                        
+                            cityManager.SetSlot(x+1, y, z, true);
+                            child = Instantiate(treePrefab, transform.position + Vector3.right * 1.0f, Quaternion.identity, this.transform);                        
                             int meshNum = myProfile.mainBlocks.Length;
                             int matNum = myProfile.mainMaterials.Length;
-                            child.GetComponent<TreeTowerBlock>().Initialize(recursionLevel + 1, myProfile.mainMaterials[Random.Range(0, matNum)], myProfile.mainBlocks[Random.Range(0, meshNum)]);                        
+                            child.GetComponent<TreeTowerBlock>().Initialize(recursionLevel + 1, myProfile.mainMaterials[Random.Range(0, matNum)], myProfile.altBlocks[Random.Range(0, myProfile.altBlocks.Length)]);                        
                         };
 
                         random = Random.Range(0, 10);
-                        if ((random<5)&&(!cityManager.CheckSlot(x, y+1, z))) //building north (+z direction)
+                        if ((random<branchProb)&&(!cityManager.CheckSlot(x, y, z+1))) //building north (+z direction)
                         {
-                            cityManager.SetSlot(x, y+1, z, true);
-                            child = Instantiate(treePrefab, transform.position + Vector3.up * 1.01f, Quaternion.identity, this.transform);                          
+                            cityManager.SetSlot(x, y, z+1, true);
+                            child = Instantiate(treePrefab, transform.position + Vector3.forward * 1.0f, Quaternion.identity, this.transform);                          
                             int meshNum = myProfile.mainBlocks.Length;
                             int matNum = myProfile.mainMaterials.Length;
-                            child.GetComponent<TreeTowerBlock>().Initialize(recursionLevel + 1, myProfile.mainMaterials[Random.Range(0, matNum)], myProfile.mainBlocks[Random.Range(0, meshNum)]);    
+                            child.GetComponent<TreeTowerBlock>().Initialize(recursionLevel + 1, myProfile.mainMaterials[Random.Range(0, matNum)], myProfile.altBlocks[Random.Range(0, myProfile.altBlocks.Length)]);    
                         };
 
                         random = Random.Range(0, 10);
-                        if ((random<5)&&(!cityManager.CheckSlot(x, y+1, z))) //building west (-x direction)
+                        if ((random<branchProb)&&(!cityManager.CheckSlot(x-1, y, z))) //building west (-x direction)
                         {
-                            cityManager.SetSlot(x, y+1, z, true);
-                            child = Instantiate(treePrefab, transform.position + Vector3.up * 1.01f, Quaternion.identity, this.transform);
+                            cityManager.SetSlot(x-1, y, z, true);
+                            child = Instantiate(treePrefab, transform.position + Vector3.left * 1.0f, Quaternion.identity, this.transform);
                             int meshNum = myProfile.mainBlocks.Length;
                             int matNum = myProfile.mainMaterials.Length;
-                            child.GetComponent<TreeTowerBlock>().Initialize(recursionLevel + 1, myProfile.mainMaterials[Random.Range(0, matNum)], myProfile.mainBlocks[Random.Range(0, meshNum)]);    
+                            child.GetComponent<TreeTowerBlock>().Initialize(recursionLevel + 1, myProfile.mainMaterials[Random.Range(0, matNum)], myProfile.altBlocks[Random.Range(0, myProfile.altBlocks.Length)]);    
                         };
                         
                         random = Random.Range(0, 10);
-                        if ((random<5)&& (!cityManager.CheckSlot(x, y+1, z))) //building south (-z direction)
+                        if ((random<branchProb)&& (!cityManager.CheckSlot(x, y, z-1))) //building south (-z direction)
                         {
-                            cityManager.SetSlot(x, y+1, z, true);
-                            child = Instantiate(treePrefab, transform.position + Vector3.up * 1.01f, Quaternion.identity, this.transform);                          
+                            cityManager.SetSlot(x, y, z-1, true);
+                            child = Instantiate(treePrefab, transform.position + Vector3.back * 1.0f, Quaternion.identity, this.transform);                          
                             int meshNum = myProfile.mainBlocks.Length;
                             int matNum = myProfile.mainMaterials.Length;
-                            child.GetComponent<TreeTowerBlock>().Initialize(recursionLevel + 1, myProfile.mainMaterials[Random.Range(0, matNum)], myProfile.mainBlocks[Random.Range(0, meshNum)]);
+                            child.GetComponent<TreeTowerBlock>().Initialize(recursionLevel + 1, myProfile.mainMaterials[Random.Range(0, matNum)], myProfile.altBlocks[Random.Range(0, myProfile.altBlocks.Length)]);
                         };
 
                         //END MODIFY CODE
@@ -178,6 +182,18 @@ namespace GRIDCITY
         // Update is called once per frame
         void Update()
         {
+            // Tree Tower obeys gravity once nuked
+            if (nukeCheck.GetComponent<SimplePhysicsController>().cityNuked)
+            {
+                GetComponent<Rigidbody>().useGravity = true;
+
+                
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    transform.GetChild(i).GetComponentInChildren<Rigidbody>().useGravity = true; //only works for the first level of children
+                }
+                
+            }
         }
 
         #endregion
